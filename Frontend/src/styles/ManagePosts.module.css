@@ -1,0 +1,80 @@
+.managePostsContainer {
+    padding: 20px;
+}
+
+.postTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.postTable th,
+.postTable td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+.thumbnail {
+    max-width: 100px;
+    max-height: 100px;
+}
+
+.editButton,
+.deleteButton,
+.saveButton,
+.cancelButton {
+    margin: 5px;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.editButton {
+    background-color: #007bff;
+    color: white;
+}
+
+.deleteButton {
+    background-color: #dc3545;
+    color: white;
+}
+
+.saveButton {
+    background-color: #28a745;
+    color: white;
+}
+
+.cancelButton {
+    background-color: #6c757d;
+    color: white;
+}
+
+.editButton,
+.deleteButton,
+.saveButton,
+.cancelButton {
+    margin: 5px;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.editButton {
+    background-color: #007bff;
+    color: white;
+}
+
+.deleteButton {
+    background-color: #dc3545;
+    color: white;
+}
+
+.saveButton {
+    background-color: #28a745;
+    color: white;
+}
+
+.cancelButton {
+    background-color: #6c757d;
+    color: white;
+}

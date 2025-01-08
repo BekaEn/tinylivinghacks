@@ -1,0 +1,97 @@
+.cmsContainer {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.title {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.toolbar {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.toolbar button {
+    padding: 5px 10px;
+    font-size: 14px;
+    background-color: #007acc;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.toolbar button:hover {
+    background-color: #005f99;
+}
+
+.submitButton {
+    padding: 10px 15px;
+    font-size: 16px;
+    background-color: #007acc;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    align-self: flex-end;
+}
+
+.submitButton:hover {
+    background-color: #005f99;
+}
+
+.postList {
+    list-style: none;
+    padding: 0;
+}
+
+.postItem {
+    margin: 20px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 15px;
+}
+
+.postItem img.thumbnail {
+    width: 100%;
+    max-width: 200px;
+    height: auto;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.postItem iframe {
+    width: 100%;
+    max-width: 600px;
+    height: 315px;
+    margin-bottom: 10px;
+    border: none;
+}
+
+.postItem h3 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.postItem p {
+    margin: 10px 0 0;
+    font-size: 16px;
+    color: #555;
+}

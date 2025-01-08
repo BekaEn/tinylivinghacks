@@ -1,0 +1,41 @@
+.termsOfServiceContainer {
+    font-family: 'Arial', sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    background-color: #f7f7f7;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.termsOfServiceContainer h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.termsOfServiceContainer h2 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 15px;
+}
+
+.termsOfServiceContainer p {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.8;
+    margin-bottom: 20px;
+}
+
+.termsOfServiceContainer ul {
+    list-style-type: disc;
+    padding-left: 40px;
+}
+
+.termsOfServiceContainer ul li {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 10px;
+}

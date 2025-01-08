@@ -1,0 +1,83 @@
+/* Header styles */
+.header {
+    background-color: #fff7e5;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ddd;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.menuIcon {
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Desktop and larger devices: show the nav links */
+.nav {
+    display: flex;
+    gap: 20px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.nav a {
+    text-decoration: none;
+    color: #004a77;
+}
+
+.nav a:hover {
+    text-decoration: underline;
+}
+
+/* Mobile: Hide nav and show it on click */
+@media (max-width: 768px) {
+    .nav {
+        display: none; /* Hide categories on mobile */
+        position: absolute;
+        top: 60px; /* Adjust as needed */
+        left: 0;
+        background-color: #fff;
+        width: 100%;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        flex-direction: column;
+        padding: 10px 20px;
+    }
+
+    .nav.visible {
+        display: flex; /* Show the categories when menu is toggled */
+    }
+
+    .nav a {
+        margin: 10px 0;
+    }
+
+    .menuIcon {
+        display: block; /* Display the menu icon on mobile */
+    }
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.searchIcon {
+    font-size: 18px;
+    cursor: pointer;
+}
+
+/* Add other styles for buttons or actions here */

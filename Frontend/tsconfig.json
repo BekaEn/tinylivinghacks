@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "jsx": "preserve", // Ensure this is set for React projects
+    "moduleResolution": "node",
+    "module": "ESNext",
+    "target": "ES6", // ES6 or higher is recommended for modern React projects
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true // Add this for React
+    ,
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "noEmit": true,
+    "incremental": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true
+  },
+  "include": [
+    "src/**/*"
+  ], // Ensure your source files are included
+  "exclude": [
+    "node_modules"
+  ] // Exclude unnecessary files
+}

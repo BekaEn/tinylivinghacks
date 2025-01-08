@@ -1,0 +1,70 @@
+.categoryContainer {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.categoryTitle {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2rem;
+    color: #333;
+}
+
+.postsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.postCard {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.postCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.thumbnail {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.postTitleLink {
+    text-decoration: none;
+}
+
+.postTitle {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin: 15px 10px 10px;
+    color: #007acc;
+    text-align: center;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.postTitle:hover {
+    color: #005f99;
+}
+
+.metaDesc {
+    font-size: 0.95rem;
+    color: #555;
+    margin: 0 10px 15px;
+    text-align: center;
+}
+
+.noPosts {
+    text-align: center;
+    font-size: 1.25rem;
+    color: #888;
+}

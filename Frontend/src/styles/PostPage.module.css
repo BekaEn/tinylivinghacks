@@ -1,0 +1,57 @@
+.postContainer {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.header {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.title {
+    font-size: 2rem;
+    color: #333;
+}
+
+.metaDesc {
+    font-size: 1rem;
+    color: #777;
+}
+
+.thumbnail {
+    width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.content {
+    line-height: 1.6;
+}
+
+.text {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.contentImage {
+    width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.videoEmbed {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.error {
+    color: red;
+    text-align: center;
+}
+
+.loading {
+    text-align: center;
+    color: #333;
+}
