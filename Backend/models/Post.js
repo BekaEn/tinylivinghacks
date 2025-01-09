@@ -6,6 +6,11 @@ const Post = sequelize.define('Post', {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    slug: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+    },
     thumbnail_url: {
         type: DataTypes.TEXT,
         allowNull: false,

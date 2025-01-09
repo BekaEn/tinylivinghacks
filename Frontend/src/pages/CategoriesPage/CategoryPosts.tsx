@@ -8,6 +8,7 @@ interface Post {
     thumbnail_url: string;
     meta_desc: string;
     category: string;
+    slug: string; // Add slug to the Post interface
 }
 
 const CategoryPosts: React.FC = () => {
@@ -17,12 +18,14 @@ const CategoryPosts: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        if (category) {
+        if (typeof category === 'string') { // Ensure category is a string
+            const categoryName = category.replace(/_/g, ' '); // Replace underscores with spaces
+
             const fetchPosts = async () => {
                 try {
                     const response = await fetch(
                         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/posts?category=${encodeURIComponent(
-                            category as string
+                            categoryName
                         )}`
                     );
                     if (!response.ok) {
@@ -46,19 +49,21 @@ const CategoryPosts: React.FC = () => {
 
     return (
         <div className={styles.categoryContainer}>
-            <h1 className={styles.categoryTitle}>{(category as string)?.replace(/_/g, ' ')}</h1>
+            <h1 className={styles.categoryTitle}>
+                {typeof category === 'string' ? category.replace(/_/g, ' ') : ''}
+            </h1>
             <div className={styles.postsGrid}>
                 {posts.length > 0 ? (
                     posts.map((post) => (
                         <div key={post.id} className={styles.postCard}>
-                            <a href={`/post/${post.id}`}>
+                            <a href={`/post/${post.slug}`}>
                                 <img
                                     src={`${process.env.NEXT_PUBLIC_API_BASE_URL}${post.thumbnail_url}`}
                                     alt={post.title}
                                     className={styles.thumbnail}
                                 />
                             </a>
-                            <a href={`/post/${post.id}`} className={styles.postTitleLink}>
+                            <a href={`/post/${post.slug}`} className={styles.postTitleLink}>
                                 <h2 className={styles.postTitle}>{post.title}</h2>
                             </a>
                             <p className={styles.metaDesc}>{post.meta_desc}</p>

@@ -22,11 +22,13 @@ const categories = [
 const ManagePostsPage: React.FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [isEditing, setIsEditing] = useState<number | null>(null);
-    const [editedCategory, setEditedCategory] = useState<string>(''); // For category editing
+    const [editedPost, setEditedPost] = useState<Post | null>(null);
+    const [uploading, setUploading] = useState(false); // Track upload status
 
+    // Fetch posts
     const fetchPosts = async () => {
         try {
-            const response = await fetch('http://cozytiny.com/api/posts');
+            const response = await fetch('https://cozytiny.com/api/posts');
             const data = await response.json();
             setPosts(data);
         } catch (error) {
@@ -34,9 +36,10 @@ const ManagePostsPage: React.FC = () => {
         }
     };
 
+    // Delete post
     const handleDelete = async (id: number) => {
         try {
-            const response = await fetch(`http://cozytiny.com/api/posts/${id}`, {
+            const response = await fetch(`https://cozytiny.com/api/posts/${id}`, {
                 method: 'DELETE',
             });
             if (response.ok) {
@@ -50,32 +53,88 @@ const ManagePostsPage: React.FC = () => {
         }
     };
 
+    // Edit post
     const handleEdit = (post: Post) => {
         setIsEditing(post.id);
-        setEditedCategory(post.category); // Set initial category for editing
+        setEditedPost({ ...post });
     };
 
-    const handleSaveCategory = async (id: number) => {
+    // Save post with updated fields
+    const handleSavePost = async () => {
+        if (!editedPost) return;
+    
         try {
-            const response = await fetch(`http://cozytiny.com/api/posts/${id}`, {
+            console.log('Saving post with data:', {
+                title: editedPost.title,
+                meta_desc: editedPost.meta_desc,
+                category: editedPost.category,
+                thumbnail_url: editedPost.thumbnail_url, // Log the thumbnail URL
+            });
+    
+            const response = await fetch(`https://cozytiny.com/api/posts/${editedPost.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ category: editedCategory }), // Only update the category
+                body: JSON.stringify({
+                    title: editedPost.title,
+                    meta_desc: editedPost.meta_desc,
+                    category: editedPost.category,
+                    thumbnail_url: editedPost.thumbnail_url, // Ensure this is sent
+                }),
             });
+    
             if (response.ok) {
-                await fetchPosts();
-                alert('Category updated successfully');
+                await fetchPosts(); // Refresh the posts list
+                alert('Post updated successfully');
                 setIsEditing(null);
+                setEditedPost(null);
             } else {
-                alert('Failed to update category');
+                alert('Failed to update post');
             }
         } catch (error) {
-            console.error('Error updating category:', error);
+            console.error('Error updating post:', error);
         }
     };
 
+    // Update fields for the edited post
+    const handleFieldChange = (field: keyof Post, value: string) => {
+        if (!editedPost) return;
+        setEditedPost({ ...editedPost, [field]: value });
+    };
+
+    // Handle thumbnail upload
+    const handleThumbnailUpload = async (file: File) => {
+        const formData = new FormData();
+        formData.append('thumbnail', file);
+
+        setUploading(true);
+
+        try {
+            // Upload the thumbnail to the server
+            const response = await fetch('https://cozytiny.com/api/uploads', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (editedPost) {
+                    // Update the thumbnail URL in the edited post state
+                    setEditedPost({ ...editedPost, thumbnail_url: data.thumbnail_url });
+                    alert('Thumbnail uploaded successfully');
+                }
+            } else {
+                alert('Failed to upload thumbnail');
+            }
+        } catch (error) {
+            console.error('Error uploading thumbnail:', error);
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    // Fetch posts on component mount
     useEffect(() => {
         fetchPosts();
     }, []);
@@ -96,20 +155,61 @@ const ManagePostsPage: React.FC = () => {
                 <tbody>
                     {posts.map((post) => (
                         <tr key={post.id}>
-                            <td>{post.title}</td>
                             <td>
-                                <img
-                                    src={`http://cozytiny.com${post.thumbnail_url}`}
-                                    alt="Thumbnail"
-                                    className={styles.thumbnail}
-                                />
+                                {isEditing === post.id ? (
+                                    <input
+                                        type="text"
+                                        value={editedPost?.title || ''}
+                                        onChange={(e) => handleFieldChange('title', e.target.value)}
+                                    />
+                                ) : (
+                                    post.title
+                                )}
                             </td>
-                            <td>{post.meta_desc}</td>
+                            <td>
+                                {isEditing === post.id ? (
+                                    <>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={(e) => {
+                                                if (e.target.files && e.target.files[0]) {
+                                                    handleThumbnailUpload(e.target.files[0]);
+                                                }
+                                            }}
+                                        />
+                                        {uploading && <p>Uploading...</p>}
+                                        {editedPost?.thumbnail_url && (
+                                            <img
+                                                src={`http://cozytiny.com${editedPost.thumbnail_url}`}
+                                                alt="Thumbnail Preview"
+                                                className={styles.thumbnail}
+                                            />
+                                        )}
+                                    </>
+                                ) : (
+                                    <img
+                                        src={`http://cozytiny.com${post.thumbnail_url}`}
+                                        alt="Thumbnail"
+                                        className={styles.thumbnail}
+                                    />
+                                )}
+                            </td>
+                            <td>
+                                {isEditing === post.id ? (
+                                    <textarea
+                                        value={editedPost?.meta_desc || ''}
+                                        onChange={(e) => handleFieldChange('meta_desc', e.target.value)}
+                                    />
+                                ) : (
+                                    post.meta_desc
+                                )}
+                            </td>
                             <td>
                                 {isEditing === post.id ? (
                                     <select
-                                        value={editedCategory}
-                                        onChange={(e) => setEditedCategory(e.target.value)}
+                                        value={editedPost?.category || ''}
+                                        onChange={(e) => handleFieldChange('category', e.target.value)}
                                     >
                                         {categories.map((category) => (
                                             <option key={category} value={category}>
@@ -125,13 +225,16 @@ const ManagePostsPage: React.FC = () => {
                                 {isEditing === post.id ? (
                                     <>
                                         <button
-                                            onClick={() => handleSaveCategory(post.id)}
+                                            onClick={handleSavePost}
                                             className={styles.saveButton}
                                         >
                                             Save
                                         </button>
                                         <button
-                                            onClick={() => setIsEditing(null)}
+                                            onClick={() => {
+                                                setIsEditing(null);
+                                                setEditedPost(null);
+                                            }}
                                             className={styles.cancelButton}
                                         >
                                             Cancel

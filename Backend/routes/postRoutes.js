@@ -17,20 +17,23 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// Post creation route
+const slugify = (title) => 
+    title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
 router.post('/', upload.single('thumbnail'), async (req, res) => {
     try {
-        const { title, meta_desc, content, category} = req.body;
-        
-        // Parse and filter content
+        const { title, meta_desc, content, category } = req.body;
+
         const parsedContent = JSON.parse(content).filter(
-            (item) => item.type && item.value.trim() // Exclude empty or invalid objects
+            (item) => item.type && item.value.trim()
         );
 
-        const thumbnail_url = req.file ? `/uploads/${req.file.originalname}` : ''; // Use original file name for URL
+        const slug = slugify(title);
+        const thumbnail_url = req.file ? `/uploads/${req.file.originalname}` : '';
 
         const post = await Post.create({
             title,
+            slug,
             thumbnail_url,
             meta_desc,
             content: JSON.stringify(parsedContent),
@@ -44,20 +47,34 @@ router.post('/', upload.single('thumbnail'), async (req, res) => {
     }
 });
 
+// Fetch a post by slug
+router.get('/:slug', async (req, res) => {
+    try {
+        const post = await Post.findOne({ where: { slug: req.params.slug } });
+        if (!post) {
+            return res.status(404).json({ error: 'Post not found' });
+        }
+        res.status(200).json(post);
+    } catch (err) {
+        console.error('Error fetching post by slug:', err);
+        res.status(500).json({ error: 'Failed to fetch post' });
+    }
+});
 // routes/postRoutes.js
 
+// Get all posts
 router.get('/', async (req, res) => {
     try {
         const { category } = req.query;
+        const whereCondition = category
+            ? { category: decodeURIComponent(category) } // Decode category parameter
+            : {};
 
-        // Normalize category by replacing underscores with spaces
-        const normalizedCategory = category ? category.replace(/_/g, ' ') : null;
+        const posts = await Post.findAll({
+            where: whereCondition,
+            order: [['createdAt', 'DESC']], // Order by createdAt in descending order
+        });
 
-        // Add filtering condition
-        const whereCondition = normalizedCategory ? { category: normalizedCategory } : {};
-
-        // Fetch posts based on the condition
-        const posts = await Post.findAll({ where: whereCondition });
         res.status(200).json(posts);
     } catch (err) {
         console.error('Error fetching posts:', err);

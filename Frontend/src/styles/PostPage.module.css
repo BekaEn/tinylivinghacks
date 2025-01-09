@@ -1,57 +1,97 @@
 .postContainer {
-    max-width: 800px;
+    max-width: 1000px;
     margin: 0 auto;
     padding: 20px;
-    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
 }
 
-.header {
-    margin-bottom: 20px;
-    text-align: center;
+.contentContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
-.title {
-    font-size: 2rem;
+.postContent {
+    flex: 3;
+}
+
+.shareButtons {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: 20px;
+}
+
+.shareButtons p {
+    margin-bottom: 10px;
+    font-weight: bold;
     color: #333;
 }
 
-.metaDesc {
-    font-size: 1rem;
-    color: #777;
+.shareIcon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    color: white;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    margin-bottom: 10px;
+}
+
+.shareIcon:hover {
+    transform: scale(1.1);
+}
+
+.facebook {
+    background-color: #1877f2;
+}
+
+.twitter {
+    background-color: #1da1f2;
+}
+
+.linkedin {
+    background-color: #0077b5;
+}
+
+.pinterest {
+    background-color: #bd081c;
+}
+
+@media (max-width: 768px) {
+    .contentContainer {
+        flex-direction: column;
+    }
+
+    .shareButtons {
+        flex-direction: row;
+        margin: 20px 0;
+        justify-content: space-evenly;
+    }
+
+    .shareIcon {
+        margin-bottom: 0;
+    }
 }
 
 .thumbnail {
-    width: 100%;
-    height: auto;
+    width: 100%; /* Make the thumbnail 50% of its container's width */
+    height: auto; /* Maintain aspect ratio */
     margin-bottom: 20px;
+    border-radius: 8px;
+    object-fit: cover; /* Ensures the image scales nicely */
 }
 
-.content {
-    line-height: 1.6;
-}
-
-.text {
-    margin-bottom: 15px;
-    color: #333;
-}
-
-.contentImage {
-    width: 100%;
-    height: auto;
-    margin-bottom: 20px;
-}
-
-.videoEmbed {
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-.error {
-    color: red;
-    text-align: center;
-}
-
-.loading {
-    text-align: center;
-    color: #333;
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+    .thumbnail {
+        width: 100%; /* Full width for smaller screens */
+        height: auto;
+        margin: 10px 0; /* Reduce margin for smaller screens */
+    }
 }

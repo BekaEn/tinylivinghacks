@@ -23,7 +23,7 @@ const CMSPage: React.FC = () => {
     
             try {
                 // Upload the image to the backend
-                const response = await fetch('http://cozytiny.com/api/upload', {
+                const response = await fetch('https://cozytiny.com/api/upload', {
                     method: 'POST',
                     body: formData,
                 });
@@ -66,7 +66,7 @@ const CMSPage: React.FC = () => {
         formData.append('category', category); // Include the selected category
 
         try {
-            const response = await fetch('http://cozytiny.com/api/posts', {
+            const response = await fetch('https://cozytiny.com/api/posts', {
                 method: 'POST',
                 body: formData,
             });

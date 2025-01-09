@@ -1,7 +1,7 @@
 module.exports = {
   reactStrictMode: true,
   env: {
-    NEXT_PUBLIC_API_BASE_URL: 'http://cozytiny.com', // Backend API base URL
+    NEXT_PUBLIC_API_BASE_URL: 'https://cozytiny.com', // Backend API base URL
   },
   async rewrites() {
     return [

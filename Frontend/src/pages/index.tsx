@@ -8,6 +8,7 @@ interface Post {
     thumbnail_url: string;
     meta_desc: string;
     content: string;
+    slug: string;
 }
 
 
@@ -18,8 +19,7 @@ const HomePage: React.FC = () => {
         // Fetch posts from the backend
         const fetchPosts = async () => {
           try {
-              const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL; // Use environment variable for base URL
-              const response = await fetch('http://cozytiny.com/api/posts');
+              const response = await fetch('https://cozytiny.com/api/posts');
       
               if (!response.ok) {
                   throw new Error(`Error: ${response.status} - ${response.statusText}`);
@@ -46,7 +46,7 @@ const HomePage: React.FC = () => {
                 <div className={styles.postsGrid}>
                     {posts.map((post) => (
                         <div key={post.id} className={styles.postCard}>
-                            <Link href={`/post/${post.id}`} className={styles.postLink}>
+                            <Link href={`/post/${post.slug}`} className={styles.postLink}>
     <img
         src={`${process.env.NEXT_PUBLIC_API_BASE_URL}${post.thumbnail_url}`}
         alt={post.title}

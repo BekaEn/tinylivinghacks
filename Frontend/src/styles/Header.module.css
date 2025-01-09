@@ -4,6 +4,30 @@
     padding: 10px 20px;
     border-bottom: 1px solid #ddd;
     font-family: Arial, sans-serif;
+    position: fixed; /* Fix the header position */
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; /* Ensure the header stays above other elements */
+    transition: transform 0.3s ease-in-out; /* Smooth transition for hiding/showing */
+    transform: translateY(0); /* Default visible state */
+}
+
+
+
+.header.hidden {
+    transform: translateY(-100%); /* Hide the header by moving it up */
+}
+
+.header.visible {
+    transform: translateY(0); /* Show the header */
+}
+
+/* Adjustments for mobile */
+@media (max-width: 768px) {
+    .header {
+        padding: 20px;
+    }
 }
 
 .container {
@@ -12,12 +36,17 @@
     align-items: center;
     max-width: 1200px;
     margin: 0 auto;
+    position: relative; /* For positioning elements inside the container */
 }
 
 .logo {
     display: flex;
     align-items: center;
-    gap: 10px;
+}
+
+.logoImage {
+    height: 50px; /* Default size for desktop */
+    width: 240px;
 }
 
 .menuIcon {
@@ -42,8 +71,43 @@
     text-decoration: underline;
 }
 
-/* Mobile: Hide nav and show it on click */
+/* Mobile-specific styles */
 @media (max-width: 768px) {
+    .header {
+        background-color: #fff7e5;
+        padding: 33px;
+        border-bottom: 1px solid #ddd;
+        font-family: Arial, sans-serif;
+    }
+    .container {
+        justify-content: space-between; /* Keep spacing for icons */
+    }
+
+    .logo {
+        position: absolute; /* Center the logo */
+        left: 40%;
+        transform: translateX(-50%);
+    }
+
+    .logoImage {
+        height: 55px; /* Adjust size for mobile */
+        width: auto;
+    }
+
+    .menuIcon {
+        position: absolute;
+        left: -60px; /* Keep the menu icon on the left */
+        top: 50%; /* Center vertically */
+        transform: translateY(-50%);
+    }
+
+    .searchIcon {
+        position: absolute;
+        right: 60px; /* Keep the search icon on the right */
+        top: 50%; /* Center vertically */
+        transform: translateY(-50%);
+    }
+
     .nav {
         display: none; /* Hide categories on mobile */
         position: absolute;
@@ -53,7 +117,7 @@
         width: 100%;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         flex-direction: column;
-        padding: 10px 20px;
+        
     }
 
     .nav.visible {
@@ -63,21 +127,4 @@
     .nav a {
         margin: 10px 0;
     }
-
-    .menuIcon {
-        display: block; /* Display the menu icon on mobile */
-    }
 }
-
-.actions {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.searchIcon {
-    font-size: 18px;
-    cursor: pointer;
-}
-
-/* Add other styles for buttons or actions here */
