@@ -1,5 +1,6 @@
 import React from 'react';
 import { GetServerSideProps } from 'next';
+import Link from 'next/link';
 import mysql from 'mysql2/promise';
 import { RowDataPacket } from 'mysql2';
 import Head from 'next/head';
@@ -18,6 +19,7 @@ interface Post {
     thumbnail_url: string;
     meta_desc: string;
     content: ContentItem[];
+    category: string;
 }
 
 interface PostDetailsPageProps {
@@ -51,6 +53,18 @@ const PostDetailsPage: React.FC<PostDetailsPageProps> = ({ post, error }) => {
                 <link rel="canonical" href={`https://cozytiny.com/post/${post.slug}`} />
             </Head>
             <div className={styles.postContainer}>
+            <nav className={styles.breadcrumb}>
+    <Link href="/">Home</Link>
+    <span className={styles.breadcrumbIcon}>›</span>
+    <Link
+        href={`/Category/${encodeURIComponent(post.category.replace(/\s/g, '_'))}`}
+    >
+        {post.category}
+    </Link>
+    <span className={styles.breadcrumbIcon}>›</span>
+    <span>{post.title}</span>
+</nav>
+
                 <div className={styles.contentContainer}>
                     <div className={styles.postContent}>
                         <header>
@@ -66,32 +80,52 @@ const PostDetailsPage: React.FC<PostDetailsPageProps> = ({ post, error }) => {
                             />
                         )}
                         <div className={styles.content}>
-                            {post.content.map((item, index) => {
-                                if (item.type === 'text') {
-                                    return <p key={index} className={styles.text}>{item.value}</p>;
-                                }
-                                if (item.type === 'image') {
-                                    return (
-                                        <img
-                                            key={index}
-                                            src={item.value}
-                                            alt="Content"
-                                            className={styles.contentImage}
-                                        />
-                                    );
-                                }
-                                if (item.type === 'video') {
-                                    return (
-                                        <div
-                                            key={index}
-                                            dangerouslySetInnerHTML={{ __html: item.value }}
-                                            className={styles.videoEmbed}
-                                        ></div>
-                                    );
-                                }
-                                return null;
-                            })}
+    {post.content.map((item, index) => {
+        if (item.type === 'text') {
+            // Check for [VIDEO] tags and extract iframe content
+            const videoMatch = item.value.match(/\[VIDEO\](.*?)\[\/?VIDEO\]/i);
+            if (videoMatch) {
+                const iframeContent = videoMatch[1].trim();
+                const srcMatch = iframeContent.match(/src="([^"]+)"/);
+                const titleMatch = iframeContent.match(/title="([^"]+)"/);
+
+                if (srcMatch && titleMatch) {
+                    const src = srcMatch[1];
+                    const title = titleMatch[1];
+
+                    return (
+                        <div key={index} className={styles.videoEmbed}>
+                            <iframe
+                                width="560"
+                                height="315"
+                                src={src}
+                                title={title}
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                            ></iframe>
                         </div>
+                    );
+                }
+            }
+
+            // If no video, render the plain text
+            return <p key={index} className={styles.text}>{item.value}</p>;
+        }
+        if (item.type === 'image') {
+            // Render image content
+            return (
+                <img
+                    key={index}
+                    src={item.value}
+                    alt="Content"
+                    className={styles.contentImage}
+                />
+            );
+        }
+        return null;
+    })}
+</div>
                     </div>
                     <div className={styles.shareButtons}>
                         <p>Share:</p>
@@ -153,7 +187,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         });
 
         const [rows] = await connection.execute<RowDataPacket[]>(
-            'SELECT id, title, slug, thumbnail_url, meta_desc, content FROM Posts WHERE slug = ?',
+            'SELECT id, title, slug, thumbnail_url, meta_desc, content, category FROM Posts WHERE slug = ?',
             [slug]
         );
 
@@ -172,6 +206,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             thumbnail_url: string;
             meta_desc: string;
             content: string;
+            category: string;
         };
 
         const content = JSON.parse(post.content || '[]');

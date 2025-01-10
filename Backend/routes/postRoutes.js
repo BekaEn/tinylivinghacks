@@ -67,12 +67,12 @@ router.get('/', async (req, res) => {
     try {
         const { category } = req.query;
         const whereCondition = category
-            ? { category: decodeURIComponent(category) } // Decode category parameter
+            ? { category: decodeURIComponent(category) }
             : {};
 
         const posts = await Post.findAll({
             where: whereCondition,
-            order: [['createdAt', 'DESC']], // Order by createdAt in descending order
+            order: [['createdAt', 'DESC']],
         });
 
         res.status(200).json(posts);

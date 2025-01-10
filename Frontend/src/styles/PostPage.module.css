@@ -95,3 +95,62 @@
         margin: 10px 0; /* Reduce margin for smaller screens */
     }
 }
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Add spacing between items */
+    font-size: 16px;
+    font-weight: 500;
+    color: #6b7280; /* Neutral gray for text */
+    margin-bottom: 20px;
+    padding: 10px 15px;
+    background-color: #f9fafb; /* Light background for breadcrumb container */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.breadcrumb a {
+    text-decoration: none;
+    color: #2563eb; /* Vibrant blue for links */
+    transition: color 0.2s ease-in-out; /* Smooth hover effect */
+}
+
+.breadcrumb a:hover {
+    color: #1d4ed8; /* Slightly darker blue on hover */
+    text-decoration: underline; /* Add underline on hover */
+}
+
+.breadcrumb span {
+    color: #374151; /* Neutral dark gray for the current page */
+    font-weight: 600; /* Bold for emphasis */
+}
+
+.breadcrumb-icon {
+    color: #9ca3af; /* Light gray for separator icon */
+    font-size: 14px; /* Smaller size for separator */
+}
+
+.videoEmbed {
+    position: relative;
+    width: 100%; /* Match the width of the container */
+    max-width: 1000px; /* Keep the video within the main container width */
+    aspect-ratio: 16 / 9; /* Maintain 16:9 aspect ratio */
+    margin-bottom: 20px; /* Add spacing below the video */
+    border-radius: 8px; /* Match the thumbnail's rounded corners */
+    overflow: hidden; /* Prevent overflow for rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+}
+
+.videoEmbed iframe {
+    width: 100%;
+    height: 100%;
+    border: none; /* Remove default iframe border */
+    border-radius: 8px; /* Ensure iframe matches the container's rounded corners */
+}
+
+@media (max-width: 768px) {
+    .videoEmbed {
+        margin-bottom: 10px; /* Reduce spacing for smaller screens */
+    }
+}
