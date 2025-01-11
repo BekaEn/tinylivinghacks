@@ -116,10 +116,10 @@ const PostDetailsPage: React.FC<PostDetailsPageProps> = ({ post, error }) => {
             // Render image content
             return (
                 <img
-                    key={index}
-                    src={item.value}
-                    alt="Content"
-                    className={styles.contentImage}
+                key={index}
+                src={`https://cozytiny.com${item.value}`} // Ensure full URL for image
+                alt={post.title} // Use post title as alt text
+                className={styles.contentImage} // Add class for styling
                 />
             );
         }

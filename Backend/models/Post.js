@@ -27,6 +27,10 @@ const Post = sequelize.define('Post', {
         type: DataTypes.STRING, // Add this field for categories
         allowNull: false,
     },
+    image_url: {
+        type: DataTypes.STRING,
+        allowNull: true, // Optional field for additional images
+      },
 }, {
     timestamps: true,
 });

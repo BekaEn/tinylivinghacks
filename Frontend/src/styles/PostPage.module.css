@@ -6,6 +6,27 @@
     flex-direction: column;
 }
 
+/* Responsive image styling for content */
+.contentImage {
+    display: block;
+    margin: 0 auto; /* Center the image */
+    max-width: 100%; /* Ensure images are responsive */
+    height: auto;
+}
+
+/* Separate styling for mobile and desktop */
+@media (max-width: 768px) {
+    .contentImage {
+        width: 100%; /* Full-width for mobile */
+    }
+}
+
+@media (min-width: 769px) {
+    .contentImage {
+        width: 75%; /* 75% width for desktop */
+    }
+}
+
 .contentContainer {
     display: flex;
     flex-direction: row;

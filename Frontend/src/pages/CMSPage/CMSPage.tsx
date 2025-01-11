@@ -50,39 +50,90 @@ const CMSPage: React.FC = () => {
         setContent(textArray);
     };
 
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const formData = new FormData();
+            formData.append('image', file);
+    
+            try {
+                const response = await fetch('https://cozytiny.com/api/posts/upload-image', {
+                    method: 'POST',
+                    body: formData,
+                });
+    
+                if (response.ok) {
+                    const data = await response.json();
+                    const imageUrl = data.filePath;
+    
+                    // Replace the last `[IMAGE]` placeholder in the content array
+                    setContent((prevContent) => {
+                        const updatedContent = [...prevContent];
+                        const placeholderIndex = updatedContent.findIndex(
+                            (item) => item.type === 'text' && item.value === '[IMAGE]'
+                        );
+    
+                        if (placeholderIndex !== -1) {
+                            updatedContent[placeholderIndex] = { type: 'image', value: imageUrl };
+                        } else {
+                            // If no placeholder exists, add a new image object
+                            updatedContent.push({ type: 'image', value: imageUrl });
+                        }
+    
+                        return updatedContent;
+                    });
+    
+                    console.log('Image uploaded successfully:', imageUrl);
+                } else {
+                    console.error('Failed to upload image');
+                }
+            } catch (error) {
+                console.error('Error uploading image:', error);
+            }
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
+    
         if (!thumbnail) {
             alert('Please upload a thumbnail!');
             return;
         }
-
+    
         const formData = new FormData();
         formData.append('title', title);
         formData.append('meta_desc', metaDescription);
         formData.append('content', JSON.stringify(content));
-        formData.append('thumbnail', thumbnail); // Include the thumbnail file
-        formData.append('category', category); // Include the selected category
-
+        formData.append('thumbnail', thumbnail);
+        formData.append('category', category);
+    
+        // Automatically assign the first image in the content to image_url
+        const firstImage = content.find((item) => item.type === 'image' && item.value);
+        if (firstImage) {
+            formData.append('image_url', firstImage.value);
+        }
+    
         try {
             const response = await fetch('https://cozytiny.com/api/posts', {
                 method: 'POST',
                 body: formData,
             });
-
+    
             if (response.ok) {
                 const post = await response.json();
-                setPosts([...posts, post]); // Update the posts state with the new post
+                console.log('Post created successfully:', post);
                 alert('Post added successfully!');
-
-                // Clear the form
+    
+                // Reset the form
                 setTitle('');
                 setThumbnail(null);
                 setMetaDescription('');
                 setContent([]);
-                setCategory(categories[0].name); // Reset to the first category
+                setCategory(categories[0].name);
             } else {
+                const errorData = await response.json();
+                console.error('Failed to add post:', errorData);
                 alert('Failed to add the post. Please try again.');
             }
         } catch (error) {
@@ -140,22 +191,31 @@ const CMSPage: React.FC = () => {
                     </select>
                 </div>
                 <div className={styles.formGroup}>
-                    <label>Content:</label>
-                    <textarea
-                        value={content
-                            .map((item) =>
-                                item.type === 'text' ? item.value : `[${item.type.toUpperCase()}]`
-                            )
-                            .join('\n')}
-                        onChange={handleContentChange}
-                        placeholder="Write your content here or embed images/videos"
-                    ></textarea>
+                <label>Content:</label>
+    <textarea
+        value={content
+            .map((item) =>
+                item.type === 'text' ? item.value : `[${item.type.toUpperCase()}]`
+            )
+            .join('\n')}
+        onChange={handleContentChange}
+        placeholder="Write your content here or embed images/videos"
+    ></textarea>
                     <div className={styles.toolbar}>
                         <button type="button" onClick={() => setContent([...content, { type: 'video', value: '' }])}>
                             Embed Video
                         </button>
                     </div>
                 </div>
+                <div className={styles.formGroup}>
+    <label htmlFor="uploadImage">Upload Additional Image:</label>
+    <input
+        type="file"
+        id="uploadImage"
+        accept="image/*"
+        onChange={handleImageUpload}
+    />
+</div>
                 <button type="submit" className={styles.submitButton}>
                     Add Post
                 </button>

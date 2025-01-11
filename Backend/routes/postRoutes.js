@@ -8,29 +8,69 @@ const router = express.Router();
 // Configure multer storage to use the original file name
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads'); // Specify the uploads folder
+        cb(null, path.join(__dirname, '../uploads')); // Save files in the "uploads" directory
     },
     filename: (req, file, cb) => {
-        cb(null, file.originalname); // Save file with its original name
+        const uniqueName = `${file.originalname}`;
+        cb(null, uniqueName);
     },
 });
-
 const upload = multer({ storage });
 
-const slugify = (title) => 
+const uploadImageStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, path.join(__dirname, '../postimage')); // Save files in "postimage" directory
+    },
+    filename: (req, file, cb) => {
+        const uniqueName = `${file.originalname}`;
+        cb(null, uniqueName);
+    },
+});
+const uploadImage = multer({ storage: uploadImageStorage });
+
+router.post('/upload-image', uploadImage.single('image'), (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'No file uploaded' });
+        }
+
+        const filePath = `/postimage/${req.file.filename}`;
+        res.status(200).json({ filePath });
+    } catch (error) {
+        console.error('Error uploading image:', error);
+        res.status(500).json({ error: 'Failed to upload image' });
+    }
+});
+
+// Helper to create slugs
+const slugify = (title) =>
     title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
+// POST route to create a new post
 router.post('/', upload.single('thumbnail'), async (req, res) => {
     try {
         const { title, meta_desc, content, category } = req.body;
 
-        const parsedContent = JSON.parse(content).filter(
-            (item) => item.type && item.value.trim()
-        );
+        if (!req.file) {
+            return res.status(400).json({ error: 'Thumbnail is required' });
+        }
+
+        const parsedContent = JSON.parse(content).map((item) => {
+            // Ensure placeholders like [IMAGE] are converted to actual image objects
+            if (item.type === 'text' && item.value === '[IMAGE]') {
+                return { type: 'image', value: null }; // Placeholder for now
+            }
+            return item;
+        });
 
         const slug = slugify(title);
-        const thumbnail_url = req.file ? `/uploads/${req.file.originalname}` : '';
+        const thumbnail_url = `/uploads/${req.file.filename}`;
 
+        // Extract the first valid image URL from the content
+        const firstImage = parsedContent.find((item) => item.type === 'image' && item.value);
+        const image_url = firstImage ? firstImage.value : null;
+
+        // Create the post
         const post = await Post.create({
             title,
             slug,
@@ -38,12 +78,13 @@ router.post('/', upload.single('thumbnail'), async (req, res) => {
             meta_desc,
             content: JSON.stringify(parsedContent),
             category,
+            image_url, // Populate the image_url field
         });
 
         res.status(201).json(post);
     } catch (err) {
         console.error('Error creating post:', err);
-        res.status(500).json({ error: 'Failed to create post' });
+        res.status(500).json({ error: 'Failed to create post', details: err.message });
     }
 });
 

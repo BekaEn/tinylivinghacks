@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import styles from '../../styles/ManagePosts.module.css';
 
+interface ContentItem {
+    type: 'text' | 'image' | 'video';
+    value: string;
+}
+
 interface Post {
     id: number;
     title: string;
     thumbnail_url: string;
     meta_desc: string;
-    content: string;
-    category: string; // Include category
+    content: ContentItem[] | string;
+    category: string;
 }
 
 const categories = [
@@ -23,7 +28,10 @@ const ManagePostsPage: React.FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [isEditing, setIsEditing] = useState<number | null>(null);
     const [editedPost, setEditedPost] = useState<Post | null>(null);
-    const [uploading, setUploading] = useState(false); // Track upload status
+    const [expandedFields, setExpandedFields] = useState<Record<number, boolean>>({}); // Tracks expanded state
+    const [uploading, setUploading] = useState(false);
+
+    const TEXT_LIMIT = 50; // Set character limit for "See More"
 
     // Fetch posts
     const fetchPosts = async () => {
@@ -38,6 +46,8 @@ const ManagePostsPage: React.FC = () => {
 
     // Delete post
     const handleDelete = async (id: number) => {
+        if (!window.confirm('Are you sure you want to delete this post?')) return;
+
         try {
             const response = await fetch(`https://cozytiny.com/api/posts/${id}`, {
                 method: 'DELETE',
@@ -62,15 +72,8 @@ const ManagePostsPage: React.FC = () => {
     // Save post with updated fields
     const handleSavePost = async () => {
         if (!editedPost) return;
-    
+
         try {
-            console.log('Saving post with data:', {
-                title: editedPost.title,
-                meta_desc: editedPost.meta_desc,
-                category: editedPost.category,
-                thumbnail_url: editedPost.thumbnail_url, // Log the thumbnail URL
-            });
-    
             const response = await fetch(`https://cozytiny.com/api/posts/${editedPost.id}`, {
                 method: 'PUT',
                 headers: {
@@ -80,10 +83,11 @@ const ManagePostsPage: React.FC = () => {
                     title: editedPost.title,
                     meta_desc: editedPost.meta_desc,
                     category: editedPost.category,
-                    thumbnail_url: editedPost.thumbnail_url, // Ensure this is sent
+                    content: editedPost.content,
+                    thumbnail_url: editedPost.thumbnail_url,
                 }),
             });
-    
+
             if (response.ok) {
                 await fetchPosts(); // Refresh the posts list
                 alert('Post updated successfully');
@@ -111,7 +115,6 @@ const ManagePostsPage: React.FC = () => {
         setUploading(true);
 
         try {
-            // Upload the thumbnail to the server
             const response = await fetch('https://cozytiny.com/api/uploads', {
                 method: 'POST',
                 body: formData,
@@ -120,7 +123,6 @@ const ManagePostsPage: React.FC = () => {
             if (response.ok) {
                 const data = await response.json();
                 if (editedPost) {
-                    // Update the thumbnail URL in the edited post state
                     setEditedPost({ ...editedPost, thumbnail_url: data.thumbnail_url });
                     alert('Thumbnail uploaded successfully');
                 }
@@ -134,7 +136,14 @@ const ManagePostsPage: React.FC = () => {
         }
     };
 
-    // Fetch posts on component mount
+    const toggleExpanded = (postId: number) => {
+        setExpandedFields((prev) => ({ ...prev, [postId]: !prev[postId] }));
+    };
+
+    const truncateText = (text: string, limit: number) => {
+        return text.length > limit ? text.slice(0, limit) + '...' : text;
+    };
+
     useEffect(() => {
         fetchPosts();
     }, []);
@@ -148,6 +157,7 @@ const ManagePostsPage: React.FC = () => {
                         <th>Title</th>
                         <th>Thumbnail</th>
                         <th>Meta Description</th>
+                        <th>Content</th>
                         <th>Category</th>
                         <th>Actions</th>
                     </tr>
@@ -163,7 +173,19 @@ const ManagePostsPage: React.FC = () => {
                                         onChange={(e) => handleFieldChange('title', e.target.value)}
                                     />
                                 ) : (
-                                    post.title
+                                    <div>
+                                        {expandedFields[post.id] || post.title.length <= TEXT_LIMIT
+                                            ? post.title
+                                            : truncateText(post.title, TEXT_LIMIT)}
+                                        {post.title.length > TEXT_LIMIT && (
+                                            <button
+                                                onClick={() => toggleExpanded(post.id)}
+                                                className={styles.seeMoreButton}
+                                            >
+                                                {expandedFields[post.id] ? 'See Less' : 'See More'}
+                                            </button>
+                                        )}
+                                    </div>
                                 )}
                             </td>
                             <td>
@@ -202,7 +224,45 @@ const ManagePostsPage: React.FC = () => {
                                         onChange={(e) => handleFieldChange('meta_desc', e.target.value)}
                                     />
                                 ) : (
-                                    post.meta_desc
+                                    <div>
+                                        {expandedFields[post.id] || post.meta_desc.length <= TEXT_LIMIT
+                                            ? post.meta_desc
+                                            : truncateText(post.meta_desc, TEXT_LIMIT)}
+                                        {post.meta_desc.length > TEXT_LIMIT && (
+                                            <button
+                                                onClick={() => toggleExpanded(post.id)}
+                                                className={styles.seeMoreButton}
+                                            >
+                                                {expandedFields[post.id] ? 'See Less' : 'See More'}
+                                            </button>
+                                        )}
+                                    </div>
+                                )}
+                            </td>
+                            <td>
+                                {isEditing === post.id ? (
+                                    <textarea
+                                        value={
+                                            typeof editedPost?.content === 'string'
+                                                ? editedPost.content
+                                                : JSON.stringify(editedPost?.content)
+                                        }
+                                        onChange={(e) => handleFieldChange('content', e.target.value)}
+                                    />
+                                ) : (
+                                    <div>
+                                        {expandedFields[post.id] || JSON.stringify(post.content).length <= TEXT_LIMIT
+                                            ? JSON.stringify(post.content)
+                                            : truncateText(JSON.stringify(post.content), TEXT_LIMIT)}
+                                        {JSON.stringify(post.content).length > TEXT_LIMIT && (
+                                            <button
+                                                onClick={() => toggleExpanded(post.id)}
+                                                className={styles.seeMoreButton}
+                                            >
+                                                {expandedFields[post.id] ? 'See Less' : 'See More'}
+                                            </button>
+                                        )}
+                                    </div>
                                 )}
                             </td>
                             <td>
