@@ -2,6 +2,8 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const Post = require('../models/Post');
+const Step = require('../models/Step'); // Import Step model
+
 
 const router = express.Router();
 
@@ -49,39 +51,38 @@ const slugify = (title) =>
 // POST route to create a new post
 router.post('/', upload.single('thumbnail'), async (req, res) => {
     try {
-        const { title, meta_desc, content, category } = req.body;
+        const { title, meta_desc, category, steps } = req.body;
 
         if (!req.file) {
             return res.status(400).json({ error: 'Thumbnail is required' });
         }
 
-        const parsedContent = JSON.parse(content).map((item) => {
-            // Ensure placeholders like [IMAGE] are converted to actual image objects
-            if (item.type === 'text' && item.value === '[IMAGE]') {
-                return { type: 'image', value: null }; // Placeholder for now
-            }
-            return item;
-        });
-
-        const slug = slugify(title);
-        const thumbnail_url = `/uploads/${req.file.filename}`;
-
-        // Extract the first valid image URL from the content
-        const firstImage = parsedContent.find((item) => item.type === 'image' && item.value);
-        const image_url = firstImage ? firstImage.value : null;
-
         // Create the post
+        const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
         const post = await Post.create({
             title,
             slug,
-            thumbnail_url,
+            thumbnail_url: `/uploads/${req.file.filename}`,
             meta_desc,
-            content: JSON.stringify(parsedContent),
+            content: 'Default content', // Add default content if not provided
             category,
-            image_url, // Populate the image_url field
         });
 
-        res.status(201).json(post);
+        // Parse and add steps to the `steps` table
+        if (steps) {
+            const parsedSteps = JSON.parse(steps);
+            for (const step of parsedSteps) {
+                await Step.create({
+                    post_id: post.id,
+                    title: step.title,
+                    content: step.content,
+                    video_url: step.video || null,
+                    image_url: step.image || null,
+                });
+            }
+        }
+
+        res.status(201).json({ message: 'Post created successfully', post });
     } catch (err) {
         console.error('Error creating post:', err);
         res.status(500).json({ error: 'Failed to create post', details: err.message });
@@ -92,16 +93,28 @@ router.post('/', upload.single('thumbnail'), async (req, res) => {
 router.get('/:slug', async (req, res) => {
     try {
         const post = await Post.findOne({ where: { slug: req.params.slug } });
+
         if (!post) {
             return res.status(404).json({ error: 'Post not found' });
         }
-        res.status(200).json(post);
+
+        const steps = await Step.findAll({ where: { post_id: post.id } });
+
+        res.status(200).json({
+            post,
+            steps: steps.map((step) => ({
+                title: step.title,
+                content: step.content,
+                video_url: step.video_url,
+                image_url: step.image_url,
+            })),
+        });
     } catch (err) {
         console.error('Error fetching post by slug:', err);
         res.status(500).json({ error: 'Failed to fetch post' });
     }
 });
-// routes/postRoutes.js
+
 
 // Get all posts
 router.get('/', async (req, res) => {
@@ -192,5 +205,34 @@ router.put('/:id', async (req, res) => {
         res.status(500).json({ error: 'Failed to update post' });
     }
 });
+
+// Move this to the top of the file or define it in a dedicated `stepsRoutes.js`
+router.get('/steps/:postId', async (req, res) => {
+    try {
+        const { postId } = req.params;
+
+        // Fetch steps for the given post_id
+        const steps = await Step.findAll({ where: { post_id: postId } });
+
+        if (!steps.length) {
+            return res.status(404).json({ error: 'No steps found for this post' });
+        }
+
+        // Return the steps
+        res.status(200).json(
+            steps.map((step) => ({
+                id: step.id,
+                title: step.title,
+                content: step.content,
+                video: step.video_url,
+                image: step.image_url,
+            }))
+        );
+    } catch (error) {
+        console.error('Error fetching steps:', error);
+        res.status(500).json({ error: 'Failed to fetch steps' });
+    }
+});
+
 
 module.exports = router;

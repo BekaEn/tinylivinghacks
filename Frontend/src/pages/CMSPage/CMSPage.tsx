@@ -6,139 +6,80 @@ const CMSPage: React.FC = () => {
     const [title, setTitle] = useState('');
     const [thumbnail, setThumbnail] = useState<File | null>(null);
     const [metaDescription, setMetaDescription] = useState('');
-    const [content, setContent] = useState<{ type: string; value: string }[]>([]);
-    const [category, setCategory] = useState(categories[0].name); // Default to the first category
-    const [posts, setPosts] = useState<
-        { title: string; thumbnail: string; metaDescription: string; content: { type: string; value: string }[]; category: string }[]
+    const [steps, setSteps] = useState<
+        { title: string; content: string; video: string; image: string | null }[]
     >([]);
+    const [category, setCategory] = useState(categories[0].name);
 
-    const handleThumbnailUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            setThumbnail(file);
-    
-            // Create form data to upload the image
+    const handleAddStep = () => {
+        setSteps([...steps, { title: '', content: '', video: '', image: null }]);
+    };
+
+    const handleStepChange = (
+        index: number,
+        field: 'title' | 'content' | 'video' | 'image',
+        value: string | File
+    ) => {
+        const updatedSteps = [...steps];
+        if (field === 'image' && value instanceof File) {
             const formData = new FormData();
-            formData.append('file', file);
-    
-            try {
-                // Upload the image to the backend
-                const response = await fetch('https://cozytiny.com/api/upload', {
-                    method: 'POST',
-                    body: formData,
-                });
-    
-                if (response.ok) {
-                    const data = await response.json();
-                    // Assuming the server returns the image URL
-                    const imageUrl = data.url;
-    
-                    // Add the image URL to the content immediately
-                    setContent([...content, { type: 'image', value: imageUrl }]);
-                } else {
-                    console.error('Failed to upload image');
-                }
-            } catch (error) {
-                console.error('Error uploading image:', error);
-            }
+            formData.append('image', value);
+            fetch('/api/posts/upload-image', {
+                method: 'POST',
+                body: formData,
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    updatedSteps[index].image = data.filePath;
+                    setSteps(updatedSteps);
+                })
+                .catch((error) => console.error('Error uploading image:', error));
+        } else {
+            updatedSteps[index][field] = value as string;
+            setSteps(updatedSteps);
         }
     };
 
-    const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        const updatedText = e.target.value;
-        const textArray = updatedText.split('\n').map((text) => ({ type: 'text', value: text }));
-        setContent(textArray);
-    };
-
-    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleThumbnailUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (file) {
-            const formData = new FormData();
-            formData.append('image', file);
-    
-            try {
-                const response = await fetch('https://cozytiny.com/api/posts/upload-image', {
-                    method: 'POST',
-                    body: formData,
-                });
-    
-                if (response.ok) {
-                    const data = await response.json();
-                    const imageUrl = data.filePath;
-    
-                    // Replace the last `[IMAGE]` placeholder in the content array
-                    setContent((prevContent) => {
-                        const updatedContent = [...prevContent];
-                        const placeholderIndex = updatedContent.findIndex(
-                            (item) => item.type === 'text' && item.value === '[IMAGE]'
-                        );
-    
-                        if (placeholderIndex !== -1) {
-                            updatedContent[placeholderIndex] = { type: 'image', value: imageUrl };
-                        } else {
-                            // If no placeholder exists, add a new image object
-                            updatedContent.push({ type: 'image', value: imageUrl });
-                        }
-    
-                        return updatedContent;
-                    });
-    
-                    console.log('Image uploaded successfully:', imageUrl);
-                } else {
-                    console.error('Failed to upload image');
-                }
-            } catch (error) {
-                console.error('Error uploading image:', error);
-            }
-        }
+        setThumbnail(file || null);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-    
+
         if (!thumbnail) {
             alert('Please upload a thumbnail!');
             return;
         }
-    
+
         const formData = new FormData();
         formData.append('title', title);
         formData.append('meta_desc', metaDescription);
-        formData.append('content', JSON.stringify(content));
-        formData.append('thumbnail', thumbnail);
         formData.append('category', category);
-    
-        // Automatically assign the first image in the content to image_url
-        const firstImage = content.find((item) => item.type === 'image' && item.value);
-        if (firstImage) {
-            formData.append('image_url', firstImage.value);
-        }
-    
+        formData.append('thumbnail', thumbnail);
+        formData.append('steps', JSON.stringify(steps));
+
         try {
-            const response = await fetch('https://cozytiny.com/api/posts', {
+            const response = await fetch('/api/posts', {
                 method: 'POST',
                 body: formData,
             });
-    
+
             if (response.ok) {
-                const post = await response.json();
-                console.log('Post created successfully:', post);
                 alert('Post added successfully!');
-    
-                // Reset the form
                 setTitle('');
                 setThumbnail(null);
                 setMetaDescription('');
-                setContent([]);
+                setSteps([]);
                 setCategory(categories[0].name);
             } else {
                 const errorData = await response.json();
                 console.error('Failed to add post:', errorData);
-                alert('Failed to add the post. Please try again.');
+                alert(errorData.error || 'Failed to add post.');
             }
         } catch (error) {
             console.error('Error adding post:', error);
-            alert('An error occurred. Please try again.');
         }
     };
 
@@ -147,42 +88,29 @@ const CMSPage: React.FC = () => {
             <h1>CMS Page</h1>
             <form onSubmit={handleSubmit} className={styles.form}>
                 <div className={styles.formGroup}>
-                    <label htmlFor="title">Title:</label>
+                    <label>Post Title:</label>
                     <input
                         type="text"
-                        id="title"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         required
                     />
                 </div>
                 <div className={styles.formGroup}>
-                    <label htmlFor="thumbnail">Thumbnail:</label>
-                    <input
-                        type="file"
-                        id="thumbnail"
-                        accept="image/*"
-                        onChange={handleThumbnailUpload}
-                        required
-                    />
+                    <label>Thumbnail:</label>
+                    <input type="file" onChange={handleThumbnailUpload} required />
                 </div>
                 <div className={styles.formGroup}>
-                    <label htmlFor="metaDescription">Meta Description:</label>
+                    <label>Meta Description:</label>
                     <textarea
-                        id="metaDescription"
                         value={metaDescription}
                         onChange={(e) => setMetaDescription(e.target.value)}
                         required
                     ></textarea>
                 </div>
                 <div className={styles.formGroup}>
-                    <label htmlFor="category">Category:</label>
-                    <select
-                        id="category"
-                        value={category}
-                        onChange={(e) => setCategory(e.target.value)}
-                        required
-                    >
+                    <label>Category:</label>
+                    <select value={category} onChange={(e) => setCategory(e.target.value)}>
                         {categories.map((cat) => (
                             <option key={cat.name} value={cat.name}>
                                 {cat.name}
@@ -190,62 +118,50 @@ const CMSPage: React.FC = () => {
                         ))}
                     </select>
                 </div>
-                <div className={styles.formGroup}>
-                <label>Content:</label>
-    <textarea
-        value={content
-            .map((item) =>
-                item.type === 'text' ? item.value : `[${item.type.toUpperCase()}]`
-            )
-            .join('\n')}
-        onChange={handleContentChange}
-        placeholder="Write your content here or embed images/videos"
-    ></textarea>
-                    <div className={styles.toolbar}>
-                        <button type="button" onClick={() => setContent([...content, { type: 'video', value: '' }])}>
-                            Embed Video
-                        </button>
-                    </div>
-                </div>
-                <div className={styles.formGroup}>
-    <label htmlFor="uploadImage">Upload Additional Image:</label>
-    <input
-        type="file"
-        id="uploadImage"
-        accept="image/*"
-        onChange={handleImageUpload}
-    />
-</div>
-                <button type="submit" className={styles.submitButton}>
-                    Add Post
-                </button>
-            </form>
 
-            <h2>Posts</h2>
-            <ul className={styles.postList}>
-                {posts.map((post, index) => (
-                    <li key={index} className={styles.postItem}>
-                        <h3>{post.title}</h3>
-                        <p>Category: {post.category}</p>
-                        {post.thumbnail && (
-                            <img src={post.thumbnail} alt="Thumbnail" className={styles.thumbnail} />
-                        )}
-                        <p><strong>Meta Description:</strong> {post.metaDescription}</p>
-                        <div>
-                            <strong>Content:</strong>
-                            {post.content.map((item, idx) => (
-                                <div key={idx}>
-                                    {item.type === 'text' && <p>{item.value}</p>}
-                                    {item.type === 'image' && <img src={item.value} alt="Content" />}
-                                    {item.type === 'video' && (
-                                        <div dangerouslySetInnerHTML={{ __html: item.value }} />
-                                    )}
-                                </div>
-                            ))}
+                <div className={styles.stepsContainer}>
+                    <h3>Steps:</h3>
+                    {steps.map((step, index) => (
+                        <div key={index} className={styles.step}>
+                            <input
+                                type="text"
+                                placeholder="Step Title"
+                                value={step.title}
+                                onChange={(e) =>
+                                    handleStepChange(index, 'title', e.target.value)
+                                }
+                            />
+                            <textarea
+                                placeholder="Step Content"
+                                value={step.content}
+                                onChange={(e) =>
+                                    handleStepChange(index, 'content', e.target.value)
+                                }
+                            ></textarea>
+                            <input
+                                type="text"
+                                placeholder="Video URL"
+                                value={step.video}
+                                onChange={(e) =>
+                                    handleStepChange(index, 'video', e.target.value)
+                                }
+                            />
+                            <input
+                                type="file"
+                                onChange={(e) =>
+                                    e.target.files && handleStepChange(index, 'image', e.target.files[0])
+                                }
+                            />
+                            {step.image && <img src={step.image} alt="Step Image" />}
                         </div>
-                    </li>
-                ))}
-            </ul>
+                    ))}
+                    <button type="button" onClick={handleAddStep} className={styles.addStepButton}>
+                        Add Step
+                    </button>
+                </div>
+
+                <button type="submit" className={styles.submitButton}>Submit Post</button>
+            </form>
         </div>
     );
 };

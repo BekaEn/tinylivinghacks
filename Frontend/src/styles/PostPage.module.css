@@ -175,3 +175,122 @@
         margin-bottom: 10px; /* Reduce spacing for smaller screens */
     }
 }
+
+/* Steps Titles Section */
+.stepsTitles {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.stepsTitles h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.stepsList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.stepTitle {
+    cursor: pointer;
+    font-size: 16px;
+    padding: 8px 12px;
+    background-color: #e7e7e7;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.stepTitle:hover {
+    background-color: #d4d4d4;
+}
+
+/* Steps Content Section */
+.steps {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #fefefe;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.step {
+    margin-bottom: 30px;
+    padding: 15px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.stepTitle {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #2c3e50;
+}
+
+.stepContent {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #444;
+}
+
+.stepContent ul {
+    list-style: disc;
+    padding-left: 20px;
+    margin-top: 10px;
+}
+
+.stepImage {
+    margin-top: 15px;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stepsTitles {
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.stepsTitles h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.stepsList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.stepsList li {
+    cursor: pointer;
+    font-size: 16px;
+    padding: 8px 12px;
+    background-color: #f2f2f2;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.stepsList li:hover {
+    background-color: #e0e0e0;
+}

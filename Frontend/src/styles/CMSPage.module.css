@@ -1,97 +1,128 @@
 .cmsContainer {
-    padding: 20px;
     max-width: 800px;
     margin: 0 auto;
-}
-
-.title {
-    text-align: center;
-    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .form {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 20px;
 }
 
 .formGroup {
     display: flex;
     flex-direction: column;
+    gap: 5px;
 }
 
+.formGroup label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
 
-.toolbar {
-    margin-top: 10px;
+.stepsContainer {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.step {
     display: flex;
-    gap: 10px;
-    align-items: center;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
 }
 
-.toolbar button {
-    padding: 5px 10px;
+.step input[type="text"],
+.step textarea,
+.step input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
     font-size: 14px;
-    background-color: #007acc;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-.toolbar button:hover {
-    background-color: #005f99;
+.step input[type="text"]:focus,
+.step textarea:focus,
+.step input[type="file"]:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    outline: none;
+}
+
+.step textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.step img {
+    margin-top: 10px;
+    max-width: 100%;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.addStepButton {
+    padding: 12px 20px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.addStepButton:hover {
+    background-color: #218838;
+    transform: scale(1.05);
 }
 
 .submitButton {
-    padding: 10px 15px;
-    font-size: 16px;
-    background-color: #007acc;
-    color: white;
+    padding: 15px 25px;
+    background-color: #007bff;
+    color: #fff;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
+    font-size: 18px;
+    font-weight: bold;
     cursor: pointer;
-    align-self: flex-end;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 .submitButton:hover {
-    background-color: #005f99;
+    background-color: #0056b3;
+    transform: scale(1.05);
 }
 
-.postList {
-    list-style: none;
-    padding: 0;
+.step label {
+    font-weight: bold;
+    font-size: 14px;
+    color: #333;
 }
 
-.postItem {
-    margin: 20px 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 15px;
-}
+@media (max-width: 768px) {
+    .step {
+        padding: 10px;
+    }
 
-.postItem img.thumbnail {
-    width: 100%;
-    max-width: 200px;
-    height: auto;
-    margin-bottom: 10px;
-    border-radius: 5px;
-}
-
-.postItem iframe {
-    width: 100%;
-    max-width: 600px;
-    height: 315px;
-    margin-bottom: 10px;
-    border: none;
-}
-
-.postItem h3 {
-    margin: 0;
-    font-size: 20px;
-}
-
-.postItem p {
-    margin: 10px 0 0;
-    font-size: 16px;
-    color: #555;
+    .addStepButton,
+    .submitButton {
+        font-size: 14px;
+    }
 }

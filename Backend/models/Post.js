@@ -22,15 +22,16 @@ const Post = sequelize.define('Post', {
     content: {
         type: DataTypes.TEXT('long'),
         allowNull: false,
+        defaultValue: '', // Default empty string
     },
     category: {
-        type: DataTypes.STRING, // Add this field for categories
+        type: DataTypes.STRING,
         allowNull: false,
     },
     image_url: {
         type: DataTypes.STRING,
-        allowNull: true, // Optional field for additional images
-      },
+        allowNull: true,
+    },
 }, {
     timestamps: true,
 });

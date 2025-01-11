@@ -15,6 +15,8 @@ app.use(bodyParser.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/postimage', express.static(path.join(__dirname, 'postimage')));
 
+app.use('/api/steps', postRoutes);
+
 // Register routes
 app.use('/api/posts', postRoutes);
 

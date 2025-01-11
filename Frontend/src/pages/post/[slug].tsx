@@ -1,15 +1,22 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { GetServerSideProps } from 'next';
 import Link from 'next/link';
 import mysql from 'mysql2/promise';
 import { RowDataPacket } from 'mysql2';
 import Head from 'next/head';
-import { FaFacebookF, FaTwitter, FaLinkedinIn, FaPinterestP } from 'react-icons/fa';
 import styles from '../../styles/PostPage.module.css';
 
 interface ContentItem {
     type: 'text' | 'image' | 'video';
     value: string;
+}
+
+interface Step {
+    id: number;
+    title: string;
+    content: string;
+    video?: string | null;
+    image?: string | null;
 }
 
 interface Post {
@@ -24,10 +31,13 @@ interface Post {
 
 interface PostDetailsPageProps {
     post: Post | null;
+    steps: Step[];
     error?: string;
 }
 
-const PostDetailsPage: React.FC<PostDetailsPageProps> = ({ post, error }) => {
+const PostDetailsPage: React.FC<PostDetailsPageProps> = ({ post, steps, error }) => {
+    const stepRefs = useRef<Array<HTMLDivElement | null>>([]);
+
     if (error) {
         return <p className={styles.error}>{error}</p>;
     }
@@ -35,6 +45,12 @@ const PostDetailsPage: React.FC<PostDetailsPageProps> = ({ post, error }) => {
     if (!post) {
         return <p className={styles.loading}>Loading...</p>;
     }
+
+    const scrollToStep = (index: number) => {
+        if (stepRefs.current[index]) {
+            stepRefs.current[index]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    };
 
     return (
         <>
@@ -52,118 +68,160 @@ const PostDetailsPage: React.FC<PostDetailsPageProps> = ({ post, error }) => {
                 <meta name="twitter:image" content={`https://cozytiny.com${post.thumbnail_url}`} />
                 <link rel="canonical" href={`https://cozytiny.com/post/${post.slug}`} />
             </Head>
+
             <div className={styles.postContainer}>
-            <nav className={styles.breadcrumb}>
-    <Link href="/">Home</Link>
-    <span className={styles.breadcrumbIcon}>›</span>
-    <Link
-        href={`/Category/${encodeURIComponent(post.category.replace(/\s/g, '_'))}`}
-    >
-        {post.category}
-    </Link>
-    <span className={styles.breadcrumbIcon}>›</span>
-    <span>{post.title}</span>
-</nav>
+    <nav className={styles.breadcrumb}>
+        <Link href="/">Home</Link>
+        <span className={styles.breadcrumbIcon}>›</span>
+        <Link
+            href={`/Category/${encodeURIComponent(
+                post.category.replace(/\s/g, '_')
+            )}`}
+        >
+            {post.category}
+        </Link>
+        <span className={styles.breadcrumbIcon}>›</span>
+        <span>{post.title}</span>
+    </nav>
 
-                <div className={styles.contentContainer}>
-                    <div className={styles.postContent}>
-                        <header>
-                            <h1 className={styles.title}>{post.title}</h1>
-                            <p className={styles.metaDesc}>{post.meta_desc}</p>
-                        </header>
-                        {post.thumbnail_url && (
+    <div className={styles.contentContainer}>
+        <div className={styles.postContent}>
+            <header>
+                <h1 className={styles.title}>{post.title}</h1>
+                <p className={styles.metaDesc}>{post.meta_desc}</p>
+            </header>
+            {post.thumbnail_url && (
+                <img
+                    src={`https://cozytiny.com${post.thumbnail_url}`}
+                    alt="Thumbnail"
+                    loading="lazy"
+                    className={styles.thumbnail}
+                />
+            )}
+
+            {/* Steps Titles Section */}
+{steps.length > 0 && (
+    <div className={styles.stepsTitles}>
+        <h2>Steps Titles</h2>
+        <ul className={styles.stepsList}>
+            {steps
+                .filter((step) => step.title || step.content || step.video || step.image) // Exclude empty steps
+                .map((step, index) => (
+                    <li
+                        key={index}
+                        className={styles.stepTitle}
+                        onClick={() =>
+                            stepRefs.current[index]?.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start',
+                            })
+                        }
+                    >
+                        {step.title}
+                    </li>
+                ))}
+        </ul>
+    </div>
+)}
+
+            {/* Main Post Content */}
+            <div className={styles.content}>
+                {post.content.map((item, index) => {
+                    if (item.type === 'text') {
+                        return (
+                            <p key={index} className={styles.text}>
+                                {item.value}
+                            </p>
+                        );
+                    }
+                    if (item.type === 'image') {
+                        return (
                             <img
-                                src={`https://cozytiny.com${post.thumbnail_url}`}
-                                alt="Thumbnail"
-                                loading="lazy"
-                                className={styles.thumbnail}
+                                key={index}
+                                src={`https://cozytiny.com${item.value}`}
+                                alt={post.title}
+                                className={styles.contentImage}
                             />
-                        )}
-                        <div className={styles.content}>
-    {post.content.map((item, index) => {
-        if (item.type === 'text') {
-            // Check for [VIDEO] tags and extract iframe content
-            const videoMatch = item.value.match(/\[VIDEO\](.*?)\[\/?VIDEO\]/i);
-            if (videoMatch) {
-                const iframeContent = videoMatch[1].trim();
-                const srcMatch = iframeContent.match(/src="([^"]+)"/);
-                const titleMatch = iframeContent.match(/title="([^"]+)"/);
-
-                if (srcMatch && titleMatch) {
-                    const src = srcMatch[1];
-                    const title = titleMatch[1];
-
-                    return (
-                        <div key={index} className={styles.videoEmbed}>
+                        );
+                    }
+                    if (item.type === 'video') {
+                        return (
                             <iframe
+                                key={index}
                                 width="560"
                                 height="315"
-                                src={src}
-                                title={title}
+                                src={item.value}
+                                title={`Video ${index + 1}`}
                                 frameBorder="0"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                 allowFullScreen
                             ></iframe>
-                        </div>
-                    );
-                }
-            }
-
-            // If no video, render the plain text
-            return <p key={index} className={styles.text}>{item.value}</p>;
-        }
-        if (item.type === 'image') {
-            // Render image content
-            return (
-                <img
-                key={index}
-                src={`https://cozytiny.com${item.value}`} // Ensure full URL for image
-                alt={post.title} // Use post title as alt text
-                className={styles.contentImage} // Add class for styling
-                />
-            );
-        }
-        return null;
-    })}
-</div>
-                    </div>
-                    <div className={styles.shareButtons}>
-                        <p>Share:</p>
-                        <a
-                            href={`https://www.facebook.com/sharer/sharer.php?u=https://cozytiny.com/post/${post.slug}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={`${styles.shareIcon} ${styles.facebook}`}
-                        >
-                            <FaFacebookF />
-                        </a>
-                        <a
-                            href={`https://twitter.com/intent/tweet?url=https://cozytiny.com/post/${post.slug}&text=${post.title}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={`${styles.shareIcon} ${styles.twitter}`}
-                        >
-                            <FaTwitter />
-                        </a>
-                        <a
-                            href={`https://www.linkedin.com/shareArticle?mini=true&url=https://cozytiny.com/post/${post.slug}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={`${styles.shareIcon} ${styles.linkedin}`}
-                        >
-                            <FaLinkedinIn />
-                        </a>
-                        <a
-                            href={`https://pinterest.com/pin/create/button/?url=https://cozytiny.com/post/${post.slug}&media=https://cozytiny.com${post.thumbnail_url}&description=${post.meta_desc}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={`${styles.shareIcon} ${styles.pinterest}`}
-                        >
-                            <FaPinterestP />
-                        </a>
-                    </div>
-                </div>
+                        );
+                    }
+                    return null;
+                })}
             </div>
+
+            {/* Steps Content */}
+            {steps.length > 0 && (
+    <div className={styles.steps}>
+        <h2>Steps Content</h2>
+        {steps
+            .filter((step) => step.title || step.content || step.video || step.image) // Exclude empty steps
+            .map((step, index) => (
+                <div
+                    key={index}
+                    className={styles.step}
+                    ref={(el) => {
+                        stepRefs.current[index] = el;
+                    }}
+                >
+                    {step.title && <h3 className={styles.stepTitle}>{step.title}</h3>}
+                    {step.content && (
+                        <div className={styles.stepContent}>
+                            {step.content.split('\n').map((line, idx) => {
+                                if (line.trim().startsWith('•')) {
+                                    return (
+                                        <li key={idx} className={styles.bulletPoint}>
+                                            {line.trim().slice(1)}
+                                        </li>
+                                    );
+                                } else if (line.trim()) {
+                                    return (
+                                        <p key={idx} className={styles.paragraph}>
+                                            {line.trim()}
+                                        </p>
+                                    );
+                                }
+                                return null;
+                            })}
+                        </div>
+                    )}
+                    {step.video && (
+                        <iframe
+                            width="560"
+                            height="315"
+                            src={step.video}
+                            title={`Step ${index + 1}`}
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                        ></iframe>
+                    )}
+                    {step.image && (
+    <img
+        src={`https://cozytiny.com${step.image}`}
+        alt={step.title || `Step ${index + 1}`}
+        className={styles.stepImage}
+    />
+)}
+                </div>
+            ))}
+    </div>
+)}
+        </div>
+    </div>
+</div>
         </>
     );
 };
@@ -172,9 +230,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const { slug } = context.params || {};
 
     if (!slug) {
-        return {
-            notFound: true,
-        };
+        return { notFound: true };
     }
 
     try {
@@ -186,41 +242,48 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             port: Number(process.env.DB_PORT) || 3306,
         });
 
-        const [rows] = await connection.execute<RowDataPacket[]>(
+        const [postRows] = await connection.execute<RowDataPacket[]>(
             'SELECT id, title, slug, thumbnail_url, meta_desc, content, category FROM Posts WHERE slug = ?',
             [slug]
         );
 
-        await connection.end();
-
-        if (rows.length === 0) {
-            return {
-                notFound: true,
-            };
+        if (postRows.length === 0) {
+            return { notFound: true };
         }
 
-        const post = rows[0] as {
-            id: number;
-            title: string;
-            slug: string;
-            thumbnail_url: string;
-            meta_desc: string;
-            content: string;
-            category: string;
-        };
+        const post = postRows[0];
 
-        const content = JSON.parse(post.content || '[]');
+        // Parse content or default to an empty array
+        let content = [];
+        try {
+            content = JSON.parse(post.content || '[]');
+        } catch (error) {
+            console.error('Failed to parse content:', error);
+        }
+
+        const [stepRows] = await connection.execute<RowDataPacket[]>(
+            'SELECT title, content, video_url, image_url FROM steps WHERE post_id = ?',
+            [post.id]
+        );
+
+        const steps = stepRows.map((step) => ({
+            title: step.title,
+            content: step.content,
+            video: step.video_url,
+            image: step.image_url,
+        }));
+
+        await connection.end();
 
         return {
             props: {
-                post: { ...post, content },
+                post: { ...post, content }, // Ensure content is always an array
+                steps,
             },
         };
     } catch (error) {
         console.error('Error fetching post:', error);
-        return {
-            notFound: true,
-        };
+        return { notFound: true };
     }
 };
 
