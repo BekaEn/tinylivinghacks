@@ -35,6 +35,35 @@ interface PostDetailsPageProps {
     error?: string;
 }
 
+const parseHyperlinks = (text: string) => {
+    const hyperlinkRegex = /<a href='(.*?)'>(.*?)<\/a>/g;
+    const parts = [];
+    let lastIndex = 0;
+
+    // Match all hyperlinks in the string
+    text.replace(hyperlinkRegex, (match, href, linkText, offset) => {
+        // Push preceding text
+        if (lastIndex < offset) {
+            parts.push(text.substring(lastIndex, offset));
+        }
+        // Push the hyperlink
+        parts.push(
+            <a key={offset} href={href} target="_blank" rel="noopener noreferrer">
+                {linkText}
+            </a>
+        );
+        lastIndex = offset + match.length;
+        return match;
+    });
+
+    // Push remaining text after the last hyperlink
+    if (lastIndex < text.length) {
+        parts.push(text.substring(lastIndex));
+    }
+
+    return parts;
+};
+
 const PostDetailsPage: React.FC<PostDetailsPageProps> = ({ post, steps, error }) => {
     const stepRefs = useRef<Array<HTMLDivElement | null>>([]);
 
@@ -49,13 +78,14 @@ const PostDetailsPage: React.FC<PostDetailsPageProps> = ({ post, steps, error })
     const scrollToStep = (index: number) => {
         if (stepRefs.current[index]) {
             stepRefs.current[index]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            stepRefs.current[index]?.focus(); // Add focus for accessibility
         }
     };
 
     return (
         <>
             <Head>
-                <title>{post.title} | Tiny Living Hacks</title>
+                <title>{post.title} | cozytiny</title>
                 <meta name="description" content={post.meta_desc} />
                 <meta property="og:title" content={post.title} />
                 <meta property="og:description" content={post.meta_desc} />
@@ -182,25 +212,25 @@ const PostDetailsPage: React.FC<PostDetailsPageProps> = ({ post, steps, error })
 
                 {/* Render Content */}
                 {step.content && (
-                    <div className={styles.stepContent}>
-                        {step.content.split('\n').map((line, idx) => {
-                            // Handle bullet points
-                            if (line.trim().startsWith('•')) {
-                                return (
-                                    <li key={idx} className={styles.bulletPoint}>
-                                        {line.trim().slice(1).trim()}
-                                    </li>
-                                );
-                            }
-                            // Handle regular lines
-                            return (
-                                <p key={idx} className={styles.paragraph}>
-                                    {line.trim()}
-                                </p>
-                            );
-                        })}
-                    </div>
-                )}
+    <div className={styles.stepContent}>
+        {step.content.split('\n').map((line, idx) => {
+            // Handle bullet points
+            if (line.trim().startsWith('•')) {
+                return (
+                    <li key={idx} className={styles.bulletPoint}>
+                        {parseHyperlinks(line.trim().slice(1).trim())}
+                    </li>
+                );
+            }
+            // Handle regular lines
+            return (
+                <p key={idx} className={styles.paragraph}>
+                    {parseHyperlinks(line.trim())}
+                </p>
+            );
+        })}
+    </div>
+)}
 
 {step.video && (
   <div className={styles.videoEmbed}>

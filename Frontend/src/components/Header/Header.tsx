@@ -37,11 +37,32 @@ const Header: React.FC = () => {
 
     const toggleMenu = () => setMenuVisible((prev) => !prev);
 
+    const generateSchemaOrgData = () => {
+        return JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'WebSite',
+            name: 'Cozy Tiny Homes',
+            url: 'https://cozytiny.com',
+            potentialAction: {
+                '@type': 'SearchAction',
+                target: 'https://cozytiny.com/search?q={search_term_string}',
+                'query-input': 'required name=search_term_string',
+            },
+            publisher: {
+                '@type': 'Organization',
+                name: 'Cozy Tiny Homes',
+                logo: {
+                    '@type': 'ImageObject',
+                    url: 'https://cozytiny.com/uploads/Cozy-Tiny-Homes-Logo.svg',
+                },
+            },
+        });
+    };
+
     return (
         <>
-            {/* Add Google Tag Manager and gtag.js scripts */}
             <Head>
-                {/* Google Tag Manager */}
+            <title>Cozy Tiny Homes - Simplify Your Life with Sustainable Living</title>
                 <script
                     dangerouslySetInnerHTML={{
                         __html: `
@@ -71,6 +92,12 @@ const Header: React.FC = () => {
                         `,
                     }}
                 ></script>
+
+                {/* Add Schema.org structured data */}
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: generateSchemaOrgData() }}
+                />
             </Head>
 
             <header

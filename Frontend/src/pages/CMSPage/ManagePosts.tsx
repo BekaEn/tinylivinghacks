@@ -23,15 +23,6 @@ interface Step {
     image?: string | null; // Optional image URL
 }
 
-const categories = [
-    'Design & Inspiration',
-    'Building & Construction',
-    'Eco-Living Tips',
-    'Furniture & Storage',
-    'Lifestyle & Wellness',
-    'Uncategorized',
-];
-
 const ManagePostsPage: React.FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [isEditing, setIsEditing] = useState<number | null>(null);

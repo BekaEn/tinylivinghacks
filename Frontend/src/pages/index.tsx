@@ -39,7 +39,7 @@ const HomePage: React.FC = () => {
         <div className={styles.homeContainer}>
             <header className={styles.header}>
             <h1>Living Tiny, Living Smart</h1>
-            <p>Find guides and hacks for a more sustainable and minimalist lifestyle.</p>
+            <p>Find guides for a more sustainable and minimalist lifestyle.</p>
             </header>
             <main className={styles.main}>
                 <h2>Latest Posts</h2>
