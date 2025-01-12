@@ -1,7 +1,7 @@
 module.exports = {
   reactStrictMode: true,
   env: {
-    NEXT_PUBLIC_API_BASE_URL: 'https://cozytiny.com', // Backend API base URL
+    NEXT_PUBLIC_API_BASE_URL: 'https://cozytiny.com',
   },
   async rewrites() {
     return [
@@ -15,5 +15,13 @@ module.exports = {
       { source: '/admin/cmspage', destination: '/CMSPage/CMSPage' },
       { source: '/admin/manageposts', destination: '/CMSPage/ManagePosts' },
     ];
+  },
+  webpackDevMiddleware: (config) => {
+    if (process.env.NODE_ENV === 'production') {
+      config.watchOptions = {
+        ignored: /node_modules/,
+      };
+    }
+    return config;
   },
 };

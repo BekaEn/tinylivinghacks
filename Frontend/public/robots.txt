@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://cozytiny.com
+
+# Sitemaps
+Sitemap: https://cozytiny.com/sitemap.xml

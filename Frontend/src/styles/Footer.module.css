@@ -1,16 +1,19 @@
+/* General footer styling */
 .footer {
-    background-color: #f8f8f8;
-    padding: 20px 40px;
+    background-color: #f8f8f8; /* Soft background */
+    padding: 30px 50px;
     font-family: Arial, sans-serif;
-    color: #333;
+    color: #222; /* Darker text for better contrast */
     border-top: 1px solid #ddd;
 }
 
+/* Footer content layout */
 .footerContent {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     flex-wrap: wrap;
+    gap: 20px;
 }
 
 .leftSection {
@@ -20,59 +23,119 @@
 }
 
 .brandName {
-    font-size: 24px;
+    font-size: 28px; /* Slightly larger font for branding */
     font-weight: bold;
     margin-bottom: 10px;
+    color: #004a77; /* Highlighted brand name color */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Subtle text shadow */
 }
 
-.middleSection, .rightSection {
+.brandDescription {
+    font-size: 16px;
+    line-height: 1.6; /* Improve readability */
+    color: #555; /* Neutral gray for description */
+}
+
+.middleSection,
+.rightSection {
     flex: 1;
-    margin-right: 20px;
     min-width: 200px;
 }
 
-.middleSection h4, .rightSection h4 {
-    font-size: 16px;
+.middleSection h4,
+.rightSection h4 {
+    font-size: 20px; /* Larger headers for better hierarchy */
+    margin-bottom: 15px;
+    color: #003a80; /* Darker blue for contrast */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.middleSection ul,
+.rightSection ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.middleSection li,
+.rightSection li {
     margin-bottom: 10px;
 }
 
-.middleSection ul, .rightSection ul {
-    list-style: none;
-    padding: 0;
-}
-
-.middleSection li, .rightSection li {
-    margin-bottom: 5px;
-}
-
-.middleSection li a, .rightSection li a {
+.middleSection li a,
+.rightSection li a {
     text-decoration: none;
-    color: #0073e6;
-    font-size: 14px;
+    color: #0056b3; /* High-contrast blue link */
+    font-size: 16px; /* Slightly larger for readability */
+    transition: all 0.3s ease-in-out;
+    font-weight: 500; /* Medium weight for links */
 }
 
-.middleSection li a:hover, .rightSection li a:hover {
+.middleSection li a:hover,
+.rightSection li a:hover {
     text-decoration: underline;
+    color: #003a80; /* Darker hover color */
 }
 
+/* Bottom footer section */
 .footerBottom {
-    margin-top: 20px;
+    margin-top: 30px;
     text-align: center;
-    font-size: 12px;
-    color: #888;
+    font-size: 14px;
+    color: #666; /* Softer gray for footer notes */
+    line-height: 1.6;
 }
 
+/* Categories Styling */
+.middleSection ul li a {
+    padding: 5px 10px; /* Add some padding for better click area */
+    border-radius: 5px;
+    display: inline-block;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.middleSection ul li a:hover {
+    background-color: #004a77; /* Darker background for hover */
+    color: #fff; /* White text for hover contrast */
+}
+
+/* Social Media Icons */
 .socialIcons {
-    margin-top: 10px;
+    margin-top: 15px;
 }
 
 .socialIcons a {
-    margin-right: 15px;
+    margin: 0 10px;
     color: #555;
     text-decoration: none;
-    font-size: 20px;
+    font-size: 22px; /* Larger icons */
+    transition: color 0.3s ease;
 }
 
 .socialIcons a:hover {
-    color: #0073e6;
+    color: #0056b3; /* High-contrast hover color */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .footerContent {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .middleSection,
+    .rightSection {
+        margin: 20px 0;
+    }
+
+    .brandName {
+        font-size: 24px; /* Adjust brand name size */
+    }
+
+    .middleSection ul li a,
+    .rightSection ul li a {
+        font-size: 14px; /* Adjust link size for smaller screens */
+    }
 }

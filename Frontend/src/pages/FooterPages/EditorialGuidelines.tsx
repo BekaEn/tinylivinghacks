@@ -6,7 +6,7 @@ const EditorialGuidelines: React.FC = () => {
         <div className={styles.editorialGuidelinesContainer}> {/* Apply the CSS module */}
             <h1>Editorial Guidelines</h1>
             <p>
-                At TinyLivingHacks, we are committed to producing high-quality, accurate, and valuable content for our readers. Our guidelines include:
+                At CozyTiny, we are committed to producing high-quality, accurate, and valuable content for our readers. Our guidelines include:
             </p>
             <ul>
                 <li>All content is thoroughly researched and fact-checked.</li>

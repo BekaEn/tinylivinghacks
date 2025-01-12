@@ -8,13 +8,13 @@ const Footer: React.FC = () => {
             <div className={styles.footerContent}>
                 {/* Left Section */}
                 <div className={styles.leftSection}>
-                    <h2 className={styles.brandName}>TinyLivingHacks</h2>
-                    <p>Get tips and tricks for creating your ideal tiny home and living sustainably.</p>
+                    <h2 className={styles.brandName}>Cozy Tiny Living Hacks</h2>
+                    <p>Get tips and tricks for creating your ideal cozy & tiny home and living sustainably.</p>
                 </div>
 
                 {/* Middle Section */}
                 <div className={styles.middleSection}>
-                    <h4>Explore</h4>
+                    <h3>Explore</h3>
                     <ul>
                         {/* Dynamically render categories */}
                         {categories.map((category, index) => (
@@ -40,25 +40,13 @@ const Footer: React.FC = () => {
 
             {/* Bottom Section */}
             <div className={styles.footerBottom}>
-                <p>© 2025 TinyLivingHacks</p>
+                <p>© 2025 CozyTiny</p>
                 <p>
-                    TinyLivingHacks is part of a sustainable living initiative, inspiring change in the way we live.
+                CozyTiny is part of a sustainable living initiative, inspiring change in the way we live.
                 </p>
-                <div className={styles.socialIcons}>
-                    <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
-                        <i className="fab fa-instagram"></i>
-                    </a>
-                    <a href="https://www.tiktok.com" target="_blank" rel="noopener noreferrer">
-                        <i className="fab fa-tiktok"></i>
-                    </a>
-                    <a href="https://www.pinterest.com" target="_blank" rel="noopener noreferrer">
-                        <i className="fab fa-pinterest"></i>
-                    </a>
-                    <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">
-                        <i className="fab fa-facebook"></i>
-                    </a>
+             
                 </div>
-            </div>
+
         </footer>
     );
 };

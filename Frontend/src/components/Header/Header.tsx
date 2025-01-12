@@ -9,7 +9,7 @@ const Header: React.FC = () => {
     const [headerHeight, setHeaderHeight] = useState(0); // Track the header height
     const headerRef = useRef<HTMLDivElement>(null); // Ref for the header element
 
-    // useCallback ensures `controlHeader` remains stable across renders
+    // Ensure `controlHeader` remains stable across renders
     const controlHeader = useCallback(() => {
         if (window.scrollY > lastScrollY) {
             // Scrolling down
@@ -76,10 +76,17 @@ const Header: React.FC = () => {
             <header
                 ref={headerRef}
                 className={`${styles.header} ${isVisible ? styles.visible : styles.hidden}`}
+                aria-label="Site Header"
             >
                 <div className={styles.container}>
                     <div className={styles.logo}>
-                        <span className={styles.menuIcon} onClick={toggleMenu}>☰</span>
+                        <button
+                            className={styles.menuIcon}
+                            onClick={toggleMenu}
+                            aria-label="Toggle Navigation Menu"
+                        >
+                            ☰
+                        </button>
                         <a href="/" className={styles.logoLink}>
                             <img
                                 src="/uploads/Cozy-Tiny-Homes-Logo.svg"
@@ -88,7 +95,10 @@ const Header: React.FC = () => {
                             />
                         </a>
                     </div>
-                    <nav className={`${styles.nav} ${menuVisible ? styles.visible : ''}`}>
+                    <nav
+                        className={`${styles.nav} ${menuVisible ? styles.visible : ''}`}
+                        aria-label="Main Navigation"
+                    >
                         {categories.map((category) => (
                             <a key={category.name} href={category.link}>
                                 {category.name}
@@ -96,7 +106,9 @@ const Header: React.FC = () => {
                         ))}
                     </nav>
                     <div className={styles.actions}>
-                        <span className={styles.searchIcon}>🔍</span>
+                        <button className={styles.searchIcon} aria-label="Search">
+                            🔍
+                        </button>
                     </div>
                 </div>
             </header>

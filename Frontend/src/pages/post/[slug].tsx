@@ -70,158 +70,169 @@ const PostDetailsPage: React.FC<PostDetailsPageProps> = ({ post, steps, error })
             </Head>
 
             <div className={styles.postContainer}>
-    <nav className={styles.breadcrumb}>
-        <Link href="/">Home</Link>
-        <span className={styles.breadcrumbIcon}>›</span>
-        <Link
-            href={`/Category/${encodeURIComponent(
-                post.category.replace(/\s/g, '_')
-            )}`}
-        >
-            {post.category}
-        </Link>
-        <span className={styles.breadcrumbIcon}>›</span>
-        <span>{post.title}</span>
-    </nav>
-
-    <div className={styles.contentContainer}>
-        <div className={styles.postContent}>
-            <header>
-                <h1 className={styles.title}>{post.title}</h1>
-                <p className={styles.metaDesc}>{post.meta_desc}</p>
-            </header>
-            {post.thumbnail_url && (
-                <img
-                    src={`https://cozytiny.com${post.thumbnail_url}`}
-                    alt="Thumbnail"
-                    loading="lazy"
-                    className={styles.thumbnail}
-                />
-            )}
-
-            {/* Steps Titles Section */}
-{steps.length > 0 && (
-    <div className={styles.stepsTitles}>
-        <h2>Steps Titles</h2>
-        <ul className={styles.stepsList}>
-            {steps
-                .filter((step) => step.title || step.content || step.video || step.image) // Exclude empty steps
-                .map((step, index) => (
-                    <li
-                        key={index}
-                        className={styles.stepTitle}
-                        onClick={() =>
-                            stepRefs.current[index]?.scrollIntoView({
-                                behavior: 'smooth',
-                                block: 'start',
-                            })
-                        }
+                <nav className={styles.breadcrumb}>
+                    <Link href="/">Home</Link>
+                    <span className={styles.breadcrumbIcon}>›</span>
+                    <Link
+                        href={`/Category/${encodeURIComponent(
+                            post.category.replace(/\s/g, '_')
+                        )}`}
                     >
-                        {step.title}
-                    </li>
-                ))}
-        </ul>
-    </div>
-)}
+                        {post.category}
+                    </Link>
+                    <span className={styles.breadcrumbIcon}>›</span>
+                    <span>{post.title}</span>
+                </nav>
 
-            {/* Main Post Content */}
-            <div className={styles.content}>
-                {post.content.map((item, index) => {
-                    if (item.type === 'text') {
-                        return (
-                            <p key={index} className={styles.text}>
-                                {item.value}
-                            </p>
-                        );
-                    }
-                    if (item.type === 'image') {
-                        return (
+                <div className={styles.contentContainer}>
+                    <div className={styles.postContent}>
+                        <header>
+                            <h1 className={styles.title}>{post.title}</h1>
+                            <p className={styles.metaDesc}>{post.meta_desc}</p>
+                        </header>
+                        {post.thumbnail_url && (
                             <img
-                                key={index}
-                                src={`https://cozytiny.com${item.value}`}
+                                src={`https://cozytiny.com${post.thumbnail_url}`}
                                 alt={post.title}
-                                className={styles.contentImage}
+                                loading="lazy"
+                                className={styles.thumbnail}
                             />
-                        );
-                    }
-                    if (item.type === 'video') {
-                        return (
-                            <iframe
-                                key={index}
-                                width="560"
-                                height="315"
-                                src={item.value}
-                                title={`Video ${index + 1}`}
-                                frameBorder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
-                            ></iframe>
-                        );
-                    }
-                    return null;
-                })}
-            </div>
+                        )}
 
-            {/* Steps Content */}
-            {steps.length > 0 && (
-    <div className={styles.steps}>
-        <h2>Steps Content</h2>
-        {steps
-            .filter((step) => step.title || step.content || step.video || step.image) // Exclude empty steps
-            .map((step, index) => (
-                <div
-                    key={index}
-                    className={styles.step}
-                    ref={(el) => {
-                        stepRefs.current[index] = el;
-                    }}
-                >
-                    {step.title && <h3 className={styles.stepTitle}>{step.title}</h3>}
-                    {step.content && (
-                        <div className={styles.stepContent}>
-                            {step.content.split('\n').map((line, idx) => {
-                                if (line.trim().startsWith('•')) {
+                        {/* Steps Titles Section */}
+                        {steps.length > 0 && (
+                            <div className={styles.stepsTitles}>
+                                
+                                <ul className={styles.stepsList}>
+                                    {steps
+                                        .filter(
+                                            (step) =>
+                                                step.title ||
+                                                step.content ||
+                                                step.video ||
+                                                step.image
+                                        )
+                                        .map((step, index) => (
+                                            <li
+                                                key={index}
+                                                className={styles.stepTitle}
+                                                onClick={() => scrollToStep(index)}
+                                            >
+                                                {step.title}
+                                            </li>
+                                        ))}
+                                </ul>
+                            </div>
+                        )}
+
+                        {/* Main Post Content */}
+                        <div className={styles.content}>
+                            {post.content.map((item, index) => {
+                                if (item.type === 'text') {
                                     return (
-                                        <li key={idx} className={styles.bulletPoint}>
-                                            {line.trim().slice(1)}
-                                        </li>
-                                    );
-                                } else if (line.trim()) {
-                                    return (
-                                        <p key={idx} className={styles.paragraph}>
-                                            {line.trim()}
+                                        <p key={index} className={styles.text}>
+                                            {item.value}
                                         </p>
+                                    );
+                                }
+                                if (item.type === 'image') {
+                                    return (
+                                        <img
+                                            key={index}
+                                            src={`https://cozytiny.com${item.value}`}
+                                            alt={post.title}
+                                            className={styles.contentImage}
+                                        />
+                                    );
+                                }
+                                if (item.type === 'video') {
+                                    return (
+                                        <iframe
+                                            key={index}
+                                            width="560"
+                                            height="315"
+                                            src={item.value}
+                                            title={`Video ${index + 1}`}
+                                            frameBorder="0"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            allowFullScreen
+                                        ></iframe>
                                     );
                                 }
                                 return null;
                             })}
                         </div>
-                    )}
-                    {step.video && (
-                        <iframe
-                            width="560"
-                            height="315"
-                            src={step.video}
-                            title={`Step ${index + 1}`}
-                            frameBorder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                        ></iframe>
-                    )}
-                    {step.image && (
-    <img
-        src={`https://cozytiny.com${step.image}`}
-        alt={step.title || `Step ${index + 1}`}
-        className={styles.stepImage}
-    />
+
+                        {/* Steps Content */}
+                        {steps.length > 0 && (
+    <div className={styles.steps}>
+       
+        {steps.map((step, index) => (
+            <div
+                key={index}
+                className={styles.step}
+                ref={(el) => {
+                    stepRefs.current[index] = el;
+                }}
+            >
+                {/* Render Title */}
+                {step.title && (
+                    <h3 className={styles.stepTitle}>{step.title}</h3>
+                )}
+
+                {/* Render Content */}
+                {step.content && (
+                    <div className={styles.stepContent}>
+                        {step.content.split('\n').map((line, idx) => {
+                            // Handle bullet points
+                            if (line.trim().startsWith('•')) {
+                                return (
+                                    <li key={idx} className={styles.bulletPoint}>
+                                        {line.trim().slice(1).trim()}
+                                    </li>
+                                );
+                            }
+                            // Handle regular lines
+                            return (
+                                <p key={idx} className={styles.paragraph}>
+                                    {line.trim()}
+                                </p>
+                            );
+                        })}
+                    </div>
+                )}
+
+{step.video && (
+  <div className={styles.videoEmbed}>
+    <iframe
+      width="560"
+      height="315"
+      src={step.video.replace('watch?v=', 'embed/')}
+      title={`Step ${index + 1}`}
+      frameBorder="0"
+      loading="lazy" // Lazy loading for iframe
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowFullScreen
+    ></iframe>
+  </div>
 )}
+
+                {/* Render Image */}
+                {step.image && (
+                    <img
+                        src={`https://cozytiny.com${step.image}`}
+                        alt={step.title || `Step ${index + 1}`}
+                        className={styles.stepImage}
+                        loading="lazy"
+                    />
+                )}
+            </div>
+        ))}
+    </div>
+)}
+                    </div>
                 </div>
-            ))}
-    </div>
-)}
-        </div>
-    </div>
-</div>
+            </div>
         </>
     );
 };
@@ -253,8 +264,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
         const post = postRows[0];
 
-        // Parse content or default to an empty array
-        let content = [];
+        let content: ContentItem[] = [];
         try {
             content = JSON.parse(post.content || '[]');
         } catch (error) {
@@ -277,7 +287,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
         return {
             props: {
-                post: { ...post, content }, // Ensure content is always an array
+                post: { ...post, content },
                 steps,
             },
         };

@@ -8,7 +8,7 @@
     text-align: center;
     margin-bottom: 30px;
     font-size: 2rem;
-    color: #333;
+    color: #222; /* Darker text color for better contrast */
 }
 
 .postsGrid {
@@ -18,8 +18,8 @@
 }
 
 .postCard {
-    background: #fff;
-    border: 1px solid #ddd;
+    background: #ffffff; /* Ensure background is pure white for contrast */
+    border: 1px solid #ccc; /* Slightly darker border */
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -28,7 +28,7 @@
 
 .postCard:hover {
     transform: translateY(-5px);
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2); /* Slightly more pronounced shadow */
 }
 
 .thumbnail {
@@ -36,6 +36,7 @@
     height: 200px;
     object-fit: cover;
     cursor: pointer;
+    border-bottom: 1px solid #ccc; /* Add separator between image and text */
 }
 
 .postTitleLink {
@@ -46,19 +47,19 @@
     font-size: 1.25rem;
     font-weight: bold;
     margin: 15px 10px 10px;
-    color: #007acc;
+    color: #0056b3; /* Higher contrast blue */
     text-align: center;
     cursor: pointer;
     transition: color 0.3s;
 }
 
 .postTitle:hover {
-    color: #005f99;
+    color: #003a80; /* Darker blue for hover state */
 }
 
 .metaDesc {
     font-size: 0.95rem;
-    color: #555;
+    color: #444; /* Higher contrast gray */
     margin: 0 10px 15px;
     text-align: center;
 }
@@ -66,5 +67,5 @@
 .noPosts {
     text-align: center;
     font-size: 1.25rem;
-    color: #888;
+    color: #555; /* Better contrast gray */
 }

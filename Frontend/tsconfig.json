@@ -1,15 +1,14 @@
 {
   "compilerOptions": {
-    "jsx": "preserve", // Ensure this is set for React projects
+    "jsx": "preserve", // Use the new JSX runtime
     "moduleResolution": "node",
     "module": "ESNext",
-    "target": "ES6", // ES6 or higher is recommended for modern React projects
+    "target": "ES6",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "allowSyntheticDefaultImports": true // Add this for React
-    ,
+    "allowSyntheticDefaultImports": true,
     "lib": [
       "dom",
       "dom.iterable",
@@ -22,9 +21,11 @@
     "isolatedModules": true
   },
   "include": [
-    "src/**/*"
-  ], // Ensure your source files are included
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
+  ],
   "exclude": [
     "node_modules"
-  ] // Exclude unnecessary files
+  ]
 }

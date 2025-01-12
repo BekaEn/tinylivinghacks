@@ -38,8 +38,8 @@ const HomePage: React.FC = () => {
     return (
         <div className={styles.homeContainer}>
             <header className={styles.header}>
-                <h1>Welcome to Tiny Living Hacks</h1>
-                <p>Explore the latest tips, tricks, and guides for sustainable living.</p>
+            <h1>Living Tiny, Living Smart</h1>
+            <p>Find guides and hacks for a more sustainable and minimalist lifestyle.</p>
             </header>
             <main className={styles.main}>
                 <h2>Latest Posts</h2>

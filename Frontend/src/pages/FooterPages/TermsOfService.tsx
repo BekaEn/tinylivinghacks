@@ -6,7 +6,7 @@ const TermsOfService: React.FC = () => {
         <div className={styles.termsOfServiceContainer}> {/* Apply CSS module styles */}
             <h1>Terms of Service</h1>
             <p>
-                By using TinyLivingHacks, you agree to comply with the following terms:
+                By using CozyTiny, you agree to comply with the following terms:
             </p>
             <ul>
                 <li>You will use our website for lawful purposes only.</li>

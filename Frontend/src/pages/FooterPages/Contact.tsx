@@ -8,7 +8,7 @@ const Contact: React.FC = () => {
             <p>
                 We’d love to hear from you! Whether you have questions, feedback, or suggestions, feel free to reach out.
             </p>
-            <p>Email: <a href="mailto:support@tinylivinghacks.com">support@tinylivinghacks.com</a></p>
+            <p>Email: <a href="mailto:support@CozyTiny.com">support@CozyTiny.com</a></p>
         </div>
     );
 };
